@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} HEADQUARTER : Cart {% endblock %}
+{% block heading %} Cart {% endblock %}
+{% block pages %} Cart {% endblock %}
+{% block content %}
+<style>
+    :root {
+        --primary-orange: #ff791a;
+        --bg-light: #f8f9fa;
+    }
+    body { background-color: var(--bg-light); }
+    .cart-container { background: white; border-radius: 15px; border: 1px solid #eee; }
+    
+    /* Image Styling */
+    .dish-img {
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-right: 15px;
+    }
+
+    /* Qty Control Alignment */
+    .qty-section {
+        background: #f1f2f6;
+        border-radius: 30px;
+        padding: 4px 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .qty-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 50% !important;
+        border: none;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }   
+</style>
+
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold m-0">Your Kitchen Cart 🧑‍🍳</h2>
+                <span class="badge bg-dark rounded-pill px-3">{{ items|length }} Items</span>
+            </div>
+
+            <div class="cart-container p-4 shadow-sm">
+                {% for item in items %}
+                <div class="row align-items-center mb-4 border-bottom pb-4">
+                    <div class="col-md-5 d-flex align-items-center">
+                        {% if item.dish.image %}
+                            <img src="{{ item.dish.image.url }}" class="dish-img" alt="{{ item.dish.name }}">
+                        {% else %}
+                            <div class="dish-img bg-secondary d-flex align-items-center justify-content-center text-white">🥘</div>
+                        {% endif %}
+                        <div>
+                            <h5 class="mb-0 fw-bold">{{ item.dish.name }}</h5>
+                            <small class="text-muted">Price: ${{ item.dish.price }}</small>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 text-center">
+                        <div class="qty-section">
+                            <button class="btn-danger qty-btn" onclick="updateCart('{{ item.dish.id }}','decrease')">-</button>
+                            <span class="fw-bold" style="color:black;">{{ item.quantity }}</span>
+                            <button class="btn-success qty-btn" onclick="updateCart('{{ item.dish.id }}','increase')">+</button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 text-end">
+                        <span class="text-muted small">Subtotal:</span>
+                        <h5 class="fw-bold mb-1">${{ item.subtotal }}</h5> 
+                        <button class="btn btn-link text-danger p-0 text-decoration-none small" 
+                                onclick="updateCart('{{ item.dish.id }}','remove')">REMOVE ITEM</button>
+                    </div>
+                </div>
+                {% endfor %}
+                <a href="{% url 'home' %}" class="text-decoration-none fw-bold" style="color: var(--primary-orange);">← Add more dishes</a>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top" style="top: 20px;">
+                <h4 class="fw-bold mb-4">Order Summary</h4>
+                
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Total Dishes</span>
+                    <span class="fw-bold text-muted">{{ items|length }}</span>
+                </div>
+                
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Base Amount</span>
+                    <span class="fw-bold text-muted">${{ total }}</span>
+                </div>
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Delivery Fee</span>
+                    {% if total > 50 %}
+                        <span class="text-success fw-bold">FREE</span>
+                    {% else %}
+                        <span class="fw-bold text-muted">$10.00</span>
+                    {% endif %}
+                </div>
+
+                {% if total <= 50 %}
+                <div class="alert alert-warning py-2 small mt-2">
+                    Add ${{ 50|add:"-total" }} more for **FREE** delivery!
+                </div>
+                {% endif %}
+                <!-- <small class="text-muted">
+                    Free delivery up to 20km. Extra charges above 20km.
+                    </small> -->
+                <hr>
+
+                <div class="d-flex justify-content-between mb-4">
+                    <h5 class="fw-bold">Grand Total</h5>
+                    <h5 class="fw-bold" style="color: var(--primary-orange);">
+                        {% if total > 50 %}
+                            {{ total }}
+                        {% elif total == 0 %}
+                            0
+                        {% else %}
+                            {{ total|add:10 }}
+                        {% endif %}
+                    </h5>
+                </div>
+
+                <a href="{% url 'checkout' %}" class="btn w-100 py-3 rounded-pill fw-bold shadow text-white text-decoration-none" 
+                style="background: linear-gradient(90deg, #ff791a, #ff9f1a); display: block; text-align: center;">
+                    PROCEED TO PAY ➔
+                </a>
+                <div class="mt-4 text-center">
+                    <small class="text-muted"><i class="bi bi-shield-check"></i> 100% Safe & Secure Checkout</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+function updateCart(dishId, action){
+    // Update effect: fade the container slightly
+    document.querySelector('.cart-container').style.opacity = '0.5';
+    
+    fetch(`/update-cart/${dishId}/${action}/`)
+    .then(response => response.json())
+    .then(data => {
+        location.reload(); 
+    })
+    .catch(err => {
+        document.querySelector('.cart-container').style.opacity = '1';
+        alert("Server error, please try again!");
+    });
+}
+</script>
+{% endblock %}

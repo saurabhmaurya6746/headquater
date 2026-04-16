@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} HEADQUARTER : Booking {% endblock %}
+{% block heading %} Reservation {% endblock %}
+{% block pages %} Pages > Booking {% endblock %}
+
+{% block content %}
+
+<div class="container-xxl py-5 px-0">
+    <div class="row g-0 align-items-stretch">
+
+        <!-- LEFT IMAGE -->
+        <div class="col-md-6">
+            <div class="h-100">
+                <img src="{% static 'img/booking.png' %}" 
+                     class="w-100 h-100 booking-img" 
+                     alt="Restaurant Interior">
+            </div>
+        </div>
+
+        <!-- RIGHT FORM -->
+        <div class="col-md-6 bg-dark d-flex align-items-center">
+            <div class="p-5 w-100">
+                
+                <h5 class="section-title ff-secondary text-start text-primary fw-normal">Reservation</h5>
+                <h1 class="text-white mb-4">Book A Table Online</h1>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="row g-3">
+
+                        <!-- Name -->
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" name="name" class="form-control custom-input" placeholder="Your Name" required>
+                                <label>Your Name</label>
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="email" name="email" class="form-control custom-input" placeholder="Your Email" required>
+                                <label>Your Email</label>
+                            </div>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" name="phone" class="form-control custom-input" placeholder="Phone Number" required>
+                                <label>Phone Number</label>
+                            </div>
+                        </div>
+
+                        <!-- Date -->
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="date" name="date" class="form-control custom-input" required>
+                                <label>Date</label>
+                            </div>
+                        </div>
+
+                        <!-- Time -->
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="time" name="time" class="form-control custom-input" required>
+                                <label>Time</label>
+                            </div>
+                        </div>
+
+                        <!-- People -->
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select name="people" class="form-select custom-input">
+                                    <option value="1">1 Person</option>
+                                    <option value="2">2 People</option>
+                                    <option value="3">3 People</option>
+                                    <option value="4">4 People</option>
+                                    <option value="5">5+ People</option>
+                                </select>
+                                <label>No Of People</label>
+                            </div>
+                        </div>
+
+                        <!-- Request -->
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <textarea name="request" class="form-control custom-input" style="height: 100px"></textarea>
+                                <label>Special Request (Optional)</label>
+                            </div>
+                        </div>
+
+                        <!-- Button -->
+                        <div class="col-12">
+                            <button class="btn btn-primary w-100 py-3 fw-bold">
+                                Book My Table Now
+                            </button>
+                        </div>
+
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* FIX IMAGE GAP */
+.booking-img {
+    object-fit: cover;
+    min-height: 100%;
+    height: 100%;
+}
+
+/* INPUT STYLE */
+.custom-input {
+    background: transparent !important;
+    border: 1px solid #FEA116 !important;
+    color: #fff !important;
+}
+
+.custom-input:focus {
+    background-color: rgba(255,255,255,0.05) !important;
+    box-shadow: none;
+    border-color: #FEA116;
+}
+
+/* REMOVE GAP ISSUE */
+.form-floating {
+    width: 100%;
+}
+.form-select option{
+    color:black;
+}
+/* BUTTON */
+.btn-primary {
+    background-color: #FEA116;
+    border: none;
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #e68a00;
+    transform: scale(1.02);
+}
+</style>
+
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} HEADQUARTER : Menu {% endblock %}
+{% block heading %} Our Menu {% endblock %}
+{% block pages %} Menu {% endblock %}
+{% block content %}
+
+<div class="container-xxl py-5">
+    <div class="container">
+
+        <!-- Heading -->
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h5 class="section-title ff-secondary text-center text-primary fw-normal">Food Menu</h5>
+            <h1 class="mb-5">HEADQUARTER Most Popular Items</h1>
+        </div>
+
+        <div class="tab-class text-center wow fadeInUp" data-wow-delay="0.1s">
+
+            <!-- 🔥 CATEGORY TABS -->
+            <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5">
+
+                {% for category in categories %}
+                <li class="nav-item">
+                    <a class="d-flex align-items-center text-start mx-3 pb-3 {% if forloop.first %}active{% endif %}" 
+                       data-bs-toggle="pill" 
+                       href="#tab-{{ category.id }}">
+
+                        <i class="fa fa-utensils fa-2x text-primary"></i>
+
+                        <div class="ps-3">
+                            <small class="text-body">Category</small>
+                            <h6 class="mt-n1 mb-0">{{ category.name }}</h6>
+                        </div>
+                    </a>
+                </li>
+                {% endfor %}
+
+            </ul>
+
+            <!-- 🔥 TAB CONTENT -->
+            <div class="tab-content">
+
+                {% for category in categories %}
+                <div id="tab-{{ category.id }}" 
+                     class="tab-pane fade show p-0 {% if forloop.first %}active{% endif %}">
+
+                    <div class="row g-4">
+
+                        {% for dish in category.dish_set.all %}
+                        {% if dish.is_available %}
+                        <div class="col-lg-6">
+
+                            <div class="d-flex align-items-center">
+
+                                <!-- Image (optional) -->
+                                {% if dish.image %}
+                                <img class="flex-shrink-0 img-fluid rounded" 
+                                     src="{{ dish.image.url }}" 
+                                     style="width: 80px;">
+                                {% endif %}
+
+                                <div class="w-100 d-flex flex-column text-start ps-4">
+
+                                    <h5 class="d-flex justify-content-between border-bottom pb-2">
+
+                                        <span>{{ forloop.counter }}. {{ dish.name }}</span>
+
+                                        <span class="text-primary">${{ dish.price }}</span>
+
+                                        <a href="{% url 'add_to_cart' dish.id %}" class="btn btn-primary btn-sm">
+                                            Add to Cart
+                                        </a>
+
+                                    </h5>
+
+                                    <small class="fst-italic">
+                                        {{ dish.description }}
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                        {% endif %}
+                        {% empty %}
+                        <p>No items available in this category</p>
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} HEADQUARTER : Checkout {% endblock %}
+{% block heading %} Checkout {% endblock %}
+{% block pages %} Checkout {% endblock %}
+{% block content %}
+<style>
+    :root {
+        --primary-orange: #ff791a;
+        --bg-light: #f8f9fa;
+    }
+    /* Navbar ke neeche space dene ke liye */
+    body { background-color: var(--bg-light); padding-top: 20px; }
+
+    .checkout-card {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid #eee;
+        padding: 30px;
+        margin-bottom: 20px;
+    }
+
+    .form-label { font-weight: 600; color: #333; margin-bottom: 8px; }
+    
+    .form-control {
+        border-radius: 10px;
+        padding: 12px 15px;
+        border: 2px solid #f1f1f1;
+        transition: 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-orange);
+        box-shadow: none;
+        background-color: #fffaf5;
+    }
+
+    .order-summary-box {
+        background: #fff;
+        border-radius: 20px;
+        border: 1px solid #eee;
+        /* Navbar ke upar na jaye isliye z-index kam rakha hai */
+        z-index: 1; 
+    }
+
+    .btn-place-order {
+        background: linear-gradient(90deg, #ff791a, #ff9f1a);
+        border: none;
+        padding: 15px;
+        border-radius: 50px;
+        font-weight: bold;
+        color: white;
+        transition: 0.3s;
+    }
+
+    .btn-place-order:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+
+    .btn-check-dist {
+        border-radius: 10px;
+        font-weight: 600;
+        margin-top: 10px;
+    }
+
+    /* Payment Option UI */
+    .payment-option-card {
+        border: 2px solid #eee;
+        border-radius: 12px;
+        padding: 15px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <h3 class="fw-bold mb-4">Complete Your Order 🛵</h3>
+            
+            <div class="checkout-card shadow-sm">
+                <form method="POST" id="checkout-form">
+                    {% csrf_token %}
+                    <h5 class="fw-bold mb-3 text-orange"><i class="bi bi-geo-alt-fill"></i> Delivery Details</h5>
+                    
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" name="name" class="form-control" 
+                            value="{{ request.user.get_full_name }}" placeholder="Enter your full name" required>                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Phone Number</label>
+                            <input type="text" name="phone" class="form-control" 
+                             value="{{ profile.phone }}" placeholder="e.g. +91 9999999999" required>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Full Address</label>
+                            <textarea name="address" id="address" class="form-control" rows="3" 
+          placeholder="House No, Street, Landmark, City" required>{{ profile.address }}</textarea>
+                            
+                            <button type="button" onclick="getDistance()" class="btn btn-dark btn-sm btn-check-dist">
+                                <i class="bi bi-pin-map"></i> Check Distance
+                            </button>
+                            <div id="distanceText" class="mt-2 small fw-bold"></div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <h5 class="fw-bold mb-3 text-orange"><i class="bi bi-credit-card"></i> Payment Method</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="payment-option-card border-primary bg-light">
+                                <i class="bi bi-cash-stack fs-4 text-orange"></i>
+                                <div>
+                                    <div class="fw-bold">Cash on Delivery</div>
+                                    <small class="text-muted">Pay at your doorstep</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="payBtn" class="btn btn-place-order w-100 mt-5" disabled>
+                        PLACE ORDER NOW ➔
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="order-summary-box p-4 shadow-sm sticky-top" style="top: 100px;">
+                <h5 class="fw-bold mb-4">Summary Review</h5>
+                
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Cart Subtotal</span>
+                    <span class="fw-bold">₹{{ total }}</span>
+                </div>
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Delivery Fee</span>
+                    <span class="fw-bold text-success">₹{{ delivery_fee }}</span>
+                </div>
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Distance</span>
+                    <span class="fw-bold text-primary" id="summaryDistance">{{ distance }} KM</span>
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <h5 class="fw-bold">Grand Total</h5>
+                    <h5 class="fw-bold" style="color: var(--primary-orange);">₹{{ grand_total }}</h5>
+                </div>
+
+                <div class="alert alert-info py-2 small border-0" style="background: #eef7ff;">
+                    <i class="bi bi-info-circle-fill me-1"></i> Delivery estimated in 30-45 mins.
+                </div>
+
+                <div class="text-center mt-3">
+                    <small class="text-muted">100% Safe & Secure Checkout</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<script>
+function getDistance(){
+    let addressInput = document.getElementById("address").value;
+
+    if(addressInput.length < 10){
+        alert("Please enter full address to check distance.");
+        return;
+    }
+
+    document.getElementById("distanceText").innerHTML = "⏳ Calculating...";
+    document.getElementById("distanceText").className = "mt-2 small fw-bold text-muted";
+
+    fetch(`/get-distance/?address=${encodeURIComponent(addressInput)}`)
+    .then(res => res.json())
+    .then(data => {
+        if(data.status === "success"){
+            document.getElementById("distanceText").innerHTML = "✅ Distance: " + data.distance + " KM";
+            document.getElementById("distanceText").className = "mt-2 small fw-bold text-success";
+            
+            // Sidebar update
+            document.getElementById("summaryDistance").innerHTML = data.distance + " KM";
+            
+            // Enable Place Order button
+            document.getElementById("payBtn").disabled = false;
+        } else {
+            document.getElementById("distanceText").innerHTML = "❌ Address not found. Try adding City/Pincode.";
+            document.getElementById("distanceText").className = "mt-2 small fw-bold text-danger";
+        }
+    })
+    .catch(()=>{
+        document.getElementById("distanceText").innerHTML = "⚠️ Server error. Try again.";
+    });
+}
+</script>
+{% endblock %}
