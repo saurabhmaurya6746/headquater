@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 import os
 from pathlib import Path
+import dj_database_url 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -81,14 +82,13 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'restaurant_db',
-        'USER': 'postgres',
-        'PASSWORD': 'saurabh67',
-        'HOST': 'localhost',
+        'NAME': 'headquater',
+        'USER': 'headquater_user',
+        'PASSWORD': 'OGusecLokwTpbWCbcAsAT4BT6WBDzHow',
+        'HOST': 'dpg-d7h77lugvqtc73evvq00-a', 
         'PORT': '5432',
     }
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
