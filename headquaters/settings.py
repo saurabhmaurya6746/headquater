@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-rnd#qeenavd0tub8-#mfqqil2jqwpr(@j8%05gagrkknb6#cnm
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['h 
+ALLOWED_HOSTS = ['headquater.onrender.com','headquater-main.onrender.com'] 
 # Application definition
 
 INSTALLED_APPS = [
