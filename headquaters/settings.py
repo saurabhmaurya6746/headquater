@@ -27,17 +27,7 @@ SECRET_KEY = 'django-insecure-rnd#qeenavd0tub8-#mfqqil2jqwpr(@j8%05gagrkknb6#cnm
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['headquater.onrender.com','headquater-main.onrender.com']
-
-from django.contrib.auth import get_user_model
-if os.environ.get("CREATE_SUPERUSER") == "True":
-    User = get_user_model()
-    if not User.objects.filter(username="admin").exists():
-        User.objects.create_superuser(
-            username="admin",
-            email="admin@gmail.com",
-            password="admin123"
-        )
+ALLOWED_HOSTS = ['h 
 # Application definition
 
 INSTALLED_APPS = [
