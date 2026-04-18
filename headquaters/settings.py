@@ -30,7 +30,6 @@ DEBUG = True
 ALLOWED_HOSTS = ['headquater.onrender.com','headquater-main.onrender.com']
 
 from django.contrib.auth import get_user_model
-
 if os.environ.get("CREATE_SUPERUSER") == "True":
     User = get_user_model()
     if not User.objects.filter(username="admin").exists():
